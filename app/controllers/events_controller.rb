@@ -1,40 +1,46 @@
 class EventsController < ApplicationController
 
     def index
-        @event = GroupEvent.all
+        event = GroupEvent.all
+        render json: {:status => "success", :content => event}
     end
 
     def create
-        @event = GroupEvent.new(event_params)
-        @event.save
-        if @article.save
-            redirect_to @article
+        event = GroupEvent.new(event_params)
+        if event.save
+            render json: {:status => "success", :content => event}
         else
-            render 'new'
+            render json: {:status => "error", :content => "An error was encountered"}
         end
     end
 
     def show
-        @event = GroupEvent.find(params[:id])
+        event = GroupEvent.find(params[:id])
+        render json: {:status => "success", :content => event}
     end
 
     def update
-        @event = GroupEvent.find(params[:id])
-        if @event.update(event_params)
-            # json success
+        event = GroupEvent.find(params[:id])
+        if event.update(event_params)
+            render json: {:status => "success", :content => event}
         else
-            # json success
+            render json: {:status => "error", :content => "An error was encountered"}
         end
     end
 
     def destroy
-        @event = GroupEvent.find(params[:id])
-        @event.destroy
+        event = GroupEvent.find(params[:id])
+        event.update(status: "Deleted")
+        if event.destroy
+            render json: {:status => "success", :content => "Event #{params[:id]}  deleted"}
+        else
+            render json: {:status => "error", :content => "An error was encountered"}
+        end
     end
 
     private
         def event_params
-            params.require(:event).permit(:name, :location, :description)
+            params.require(:event).permit(:name, :location, :description, :start, :end, :duration, :status)
         end
     
 end
