@@ -10,37 +10,35 @@ class ApplicationController < ActionController::API
         if methods.include? request.method
             require 'date'
 
-            fields = ["name", "location", "description", "start", "end", "duration"]
+            fields = ["name", "location", "description", "eventstart", "eventend", "duration"]
 
+            params[:status] = 'Published'
             fields.each { |item|
                 if !params.key?(item)
-                    params[:status] = "Draft"
-                    break
-                else
-                    params[:status] = "Published"
+                    params[:status] = 'Draft'
                 end
             }
 
             case params
-            when !params[:start].empty? && !params[:end].empty? && params[:duration].empty?
+            when !params.key?(:eventstart) && !params.key?(:eventend) && params.key?(:duration)
                 begin
-                    startDate = DateTime.parse(params[:start])
-                    endDate = DateTime.parse(params[:end])
+                    startDate = DateTime.parse(params[:eventstart])
+                    endDate = DateTime.parse(params[:eventend])
                     params[:duration] = (endDate - startDate).to_i
                 rescue
                     render json: {:status => "error", :content => "Invalid start or end date specified"}
                 end
-            when !params[:start].empty? && params[:end].empty? && !params[:duration].empty?
+            when !params.key?(:eventstart) && params.key?(:eventend) && !params.key?(:duration)
                 begin
-                    startDate = DateTime.parse(params[:start])
-                    params[:end] = DateTime.parse(params[:start]).next_day(duration)
+                    startDate = DateTime.parse(params[:eventstart])
+                    params[:eventend] = DateTime.parse(params[:eventstart]).next_day(duration)
                 rescue
                     render json: {:status => "error", :content => "Invalid start date or duration specified"}
                 end
-            when params[:start].empty? && !params[:end].empty? && !params[:duration].empty?
+            when params.key?(:eventstart) && !params.key?(:eventend) && !params.key?(:duration)
                 begin
-                    endDate = DateTime.parse(params[:end])
-                    params[:start] = (endDate.to_s - params[:duration])
+                    endDate = DateTime.parse(params[:eventend])
+                    params[:eventstart] = (endDate.to_s - params[:duration])
                 rescue
                     render json: {:status => "error", :content => "Invalid end date or duration specified"}
                 end

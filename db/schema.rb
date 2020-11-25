@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_24_065739) do
+ActiveRecord::Schema.define(version: 2020_11_25_024356) do
 
   create_table "group_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "name"
     t.string "location"
     t.text "description"
-    t.datetime "start"
-    t.datetime "end"
+    t.datetime "eventstart"
+    t.datetime "eventend"
     t.integer "duration"
     t.string "status"
     t.datetime "created_at", precision: 6, null: false

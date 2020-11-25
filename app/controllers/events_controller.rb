@@ -30,8 +30,7 @@ class EventsController < ApplicationController
 
     def destroy
         event = GroupEvent.find(params[:id])
-        event.update(status: "Deleted")
-        if event.destroy
+        if event.update(status: "Deleted")
             render json: {:status => "success", :content => "Event #{params[:id]}  deleted"}
         else
             render json: {:status => "error", :content => "An error was encountered"}
@@ -40,7 +39,7 @@ class EventsController < ApplicationController
 
     private
         def event_params
-            params.require(:event).permit(:name, :location, :description, :start, :end, :duration, :status)
+            params.permit(:name, :location, :description, :eventstart, :eventend, :duration, :status)
         end
     
 end
