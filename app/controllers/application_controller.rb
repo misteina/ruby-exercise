@@ -4,7 +4,11 @@ class ApplicationController < ActionController::API
 
     private
     def dateCompute
-
+=begin       
+        if request.method == "POST" && !params.key?(:name)
+            render json: {:status => "error", :content => "The group event name is required"} and return
+        end
+=end
         require 'date'
 
         if params.key?(:eventstart) && params.key?(:eventend) && !params.key?(:duration)
@@ -31,6 +35,16 @@ class ApplicationController < ActionController::API
                 params[:eventstart] = (endDate - params[:duration].to_i).strftime("%Y-%m-%d %I:%M:%S")
             rescue
                 render json: {:status => "error", :content => "Invalid end date or duration specified"} and return
+            end
+        end
+
+        fields = ["name", "location", "description", "eventstart", "eventend", "duration"]
+
+        params[:status] = "Published"
+        fields.each do |item|
+            if !params.key?(item)
+                params[:status] = "Draft"
+                break
             end
         end
     end

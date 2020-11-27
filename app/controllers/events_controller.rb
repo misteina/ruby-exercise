@@ -8,10 +8,9 @@ class EventsController < ApplicationController
     def create
         event = GroupEvent.new(event_params)
         if event.save
-            eventStatus = checkPublished(event)
-            render json: {:status => "success", :content => eventStatus}
+            render json: {:status => "success", :content => event}
         else
-            render json: {:status => "error", :content => "An error was encountered"}
+            render json: {:status => "error", :content => event.errors.full_messages}
         end
     end
 
@@ -23,10 +22,9 @@ class EventsController < ApplicationController
     def update
         event = GroupEvent.find(params[:id])
         if event.update(event_params)
-            eventStatus = checkPublished(event)
-            render json: {:status => "success", :content => eventStatus}
+            render json: {:status => "success", :content => event}
         else
-            render json: {:status => "error", :content => "An error was encountered"}
+            render json: {:status => "error", :content => event.errors.full_messages}
         end
     end
 
@@ -35,7 +33,7 @@ class EventsController < ApplicationController
         if event.update(status: "Deleted")
             render json: {:status => "success", :content => event}
         else
-            render json: {:status => "error", :content => "An error was encountered"}
+            render json: {:status => "error", :content => event.errors.full_messages}
         end
     end
 
@@ -43,18 +41,6 @@ class EventsController < ApplicationController
 
     def event_params
         params.permit(:name, :location, :description, :eventstart, :eventend, :duration, :status)
-    end
-
-    def checkPublished event
-        status = "Published"
-        event.attributes.each do |name, values|
-            if !values
-                status = "Draft"
-                break  
-            end
-        end
-        event.update(status: status)
-        return event
     end
     
 end

@@ -140,7 +140,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     test "Mark as Published or Draft" do
         post '/events', params: { name: "Sport", location: "Madrid", description: "The description" }, xhr: true
         assert_equal( JSON.parse(@response.body)["content"]["status"], "Draft")
-        put '/events/' + group_events(:one).id.to_s, params: { eventstart: "2020-09-10 12:00:00", eventend: "2020-09-12 12:00:00"}, xhr: true
+        put '/events/' + group_events(:one).id.to_s, params: { name: "Sport", location: "Madrid", description: "The description", eventstart: "2020-09-10 12:00:00", eventend: "2020-09-12 12:00:00"}, xhr: true
         assert_equal( JSON.parse(@response.body)["content"]["status"], "Published")
     end
 
